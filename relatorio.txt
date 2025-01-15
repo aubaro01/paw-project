@@ -1,0 +1,7 @@
+
+- Os contrastes das cores da navbar 
+- Em determinadas partes as cores cinzas tem um contrastes
+- Erro de escrita nas respostas de medicos
+- Inconcistencia em termo de design na parte de respostas dos medicos
+- Links não funcionais
+- 
