@@ -1,0 +1,13 @@
+Erro: Cor e tipo de letra no footer.
+ss: Melhorar o tipo e o tamanho das letras e colocar um efeito "hover" para Melhorar.
+
+
+Erro: Melhorar a composição da pagina.
+ss: Deixar de forma mais clara a posição da mesma
+
+Erro: Um gerador ou uma sugestão para password
+ss: ...
+
+erro: Login com administrador de um hospital 
+ss: Não pede em nenhum lugar para validar em qual hospital eu trabalho
+
