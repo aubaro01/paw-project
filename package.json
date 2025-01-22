@@ -1,0 +1,15 @@
+{
+  "name": "paw-project",
+  "version": "1.0.0",
+  "description": "Este documento descreve os problemas de acessibilidade e usabilidade encontrados na página principal do website Doctoralia.com, juntamente com recomendações para os corrigir. Use a estrutura abaixo para adicionar novos problemas que possam ser identificados.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
