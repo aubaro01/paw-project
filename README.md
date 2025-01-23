@@ -6,49 +6,11 @@ Este documento descreve os problemas de acessibilidade e usabilidade encontrados
 
 ---
 
-## Estrutura do Sistema
+### Estrutura para Novos Problemas
 
-A arquitetura do sistema está organizada em quatro camadas principais:
+Cada novo problema deve ser adicionado utilizando o seguinte formato:
 
-**1. Frontend (UI/UX)**
-
-- **Objetivo:** Interface gráfica acessível e intuitiva para os utilizadores.
-- **Páginas principais:**
-  - `/book-appointment` - Agendamento de consultas.
-  - `/profile/:id` - Visualização de perfis de usuários.
-  - `/messages` - Sistema de mensagens entre utilizadores.
-
-**2. Middleware**
-
-- **Objetivo:** Camada intermediária para comunicação entre o frontend e o backend.
-- **Endpoints principais:**
-  - `/api/messages/send` - Envio de mensagens.
-  - `/api/appointments` - Gerenciamento de consultas.
-  - `/api/users/auth` - Autenticação de utilizadores.
-
-**3. Backend**
-
-- **Objetivo:** Lógica de negócios e manipulação de dados.
-- **Serviços principais:**
-  - `/api/users` - Gestão de contas de utilizadores.
-  - `/api/appointments` - Gestão de marcações.
-  - `/api/reviews` - Avaliações de consultas.
-
-**4. Banco de Dados**
-
-- **Objetivo:** Armazenamento estruturado e seguro dos dados do sistema.
-- **Tabelas principais:**
-  - `users` - Dados dos utilizadores.
-  - `appointments` - Informações sobre marcações.
-  - `messages` - Histórico de mensagens.
-
----
-
-## Estrutura para Novos Problemas
-
-Cada novo problema deve ser documentado utilizando o seguinte formato:
-
-### Categoria do Problema
+#### Categoria do Problema
 
 - **Descrição:** Breve explicação do problema encontrado.
 - **Caminho:** Onde o problema ocorre no código ou na interface.
@@ -58,13 +20,13 @@ Cada novo problema deve ser documentado utilizando o seguinte formato:
 
 ---
 
-## Problemas Atuais
+### Problemas Atuais
 
-### 1. Atributos ARIA Não Permitidos
+#### 1. **Atributos ARIA Não Permitidos**
 
 - **Descrição:** Uso de atributos ARIA não permitidos, como `aria-expanded`.
 - **Caminho:**
-  - `.query-dropdown > .dropdown-toggle[aria-haspopup="true"]` 
+  - `.query-dropdown > .dropdown-toggle[aria-haspopup="true"]`
   - `.city-col > .search-autocomplete-dropdown.dp-dropdown.dropdown > .dropdown-toggle[aria-haspopup="true"]`
 - **Detalhes Técnicos:**
   ```html
@@ -73,48 +35,77 @@ Cada novo problema deve ser documentado utilizando o seguinte formato:
 - **Impacto:** Atributos inválidos podem confundir tecnologias assistivas.
 - **Solução Proposta:** Remova ou substitua os atributos ARIA para valores permitidos.
 
-### 2. Problemas de Contraste de Cor
+#### 2. **Problemas de Contraste de Cor**
 
-- **Descrição:** Contraste inadequado entre texto e fundo.
+- **Descrição:** Contraste insuficiente entre texto e fundo.
 - **Caminhos:**
   - `a[title="Privacidade dos dados"]`
   - `.ml-0-5[data-v-714bdc06=""]`
 - **Detalhes Técnicos:**
-  ```css
-  background-color: #008571;
-  color: #ffffff;
-  ```
-- **Impacto:** Dificulta a legibilidade para utilizadores com deficiências visuais.
-- **Solução Proposta:** Ajustar cores para atender aos padrões de contraste.
+  - Contraste atual: 2.24:1
+  - Recomendado: 4.5:1
+  - Exemplo:
+    ```css
+    background-color: #008571;
+    color: #ffffff;
+    ```
+- **Impacto:** Dificulta a legibilidade, especialmente para utilizadores com deficiências visuais.
+- **Solução Proposta:** Ajustar as cores de fundo e texto para atender ao contraste mínimo.
 
-### 3. Atributos Alt Faltando
+#### 3. **Atributos Alt Faltando**
 
-- **Descrição:** Imagens sem atributos `alt` adequados.
+- **Descrição:** Imagens sem atributos `alt` ou equivalentes.
 - **Caminho:** `img[loading="lazy"]`
 - **Detalhes Técnicos:**
   ```html
   <img src="image.webp" loading="lazy">
   ```
-- **Impacto:** Usuários com leitores de ecrã não conseguem interpretar as imagens.
-- **Solução Proposta:** Adicionar descrições `alt` relevantes.
+- **Impacto:** Usuários de leitores de ecrã não conseguem entender o conteúdo das imagens.
+- **Solução Proposta:** Adicione um atributo `alt` descritivo ou use `role="presentation"`.
 
-### 4. Links com Contraste e Estilo Insuficientes
+#### 4. **Links com Contraste e Estilo Insuficientes**
 
-- **Descrição:** Links pouco diferenciados do texto circundante.
-- **Caminho:**
+- **Descrição:** Links com baixo contraste ou sem diferenciação visual.
+- **Caminhos:**
   - `figure[itemtype="http://schema.org/Question"]:nth-child(2) > .media > .media-body > figcaption > p[itemprop="text"] > a`
 - **Detalhes Técnicos:**
-  ```css
-  text-decoration: underline;
+  - Contraste atual: 2.59:1
+  - Exemplo de estilo ausente:
+    ```css
+    text-decoration: none;
+    ```
+- **Impacto:** Dificulta a identificação de links, prejudicando a navegação.
+- **Solução Proposta:** Aumentar o contraste e adicionar sublinhado ou outro estilo visual.
+
+#### 5. **Elementos sem Texto Acessível**
+
+- **Descrição:** Elementos interativos sem texto acessível para leitores de ecrã.
+- **Caminhos:**
+  - `a[data-test-id="dp-logo"]`
+  - `.mx-sm-0`
+- **Detalhes Técnicos:**
+  ```html
+  <a href="/" class="logo"></a>
   ```
-- **Impacto:** Usuários podem não identificar os links corretamente.
-- **Solução Proposta:** Melhorar o contraste e adicionar estilos visuais.
+- **Impacto:** Usuários com deficiência visual não conseguem identificar a funcionalidade do elemento.
+- **Solução Proposta:** Adicione um atributo `aria-label` ou texto visível.
+
+#### 6. **Meta Viewport Não Acessível**
+
+- **Descrição:** Impede o zoom em dispositivos móveis.
+- **Caminho:** `<meta name="viewport">`
+- **Detalhes Técnicos:**
+  ```html
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  ```
+- **Impacto:** Usuários móveis não conseguem aumentar o tamanho do conteúdo.
+- **Solução Proposta:** Remova `user-scalable=no`.
 
 ---
 
 ## Recomendações Gerais
 
-1. **Teste Regular de Acessibilidade:** Utilize ferramentas como Lighthouse ou Axe para manter conformidade com WCAG.
-2. **Educação da Equipa:** Sensibilizar os desenvolvedores para boas práticas de acessibilidade.
-3. **Verificação de Contraste:** Implementar testes automáticos de contraste durante o desenvolvimento.
-4. **Documentação Clara:** Assegurar que cada elemento tenha documentação apropriada para futuras revisões.
+1. **Teste Regular de Acessibilidade:** Utilize ferramentas como Lighthouse ou Axe para verificar regularmente a conformidade com as normas WCAG.
+2. **Educação da Equipa:** Certifique-se de que os desenvolvedores compreendem as boas práticas de acessibilidade.
+3. **Revisão de Contraste:** Implementar verificações automáticas de contraste durante o desenvolvimento.
+4. **Documentação Clara:** Garanta que cada elemento tenha a documentação necessária para corrigir ou evitar problemas semelhantes no futuro.
