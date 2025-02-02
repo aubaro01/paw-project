@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 
 // Routes,  não sei se fiz certo
-app.use('/api/doctors', douctor_routes);
+app.use('/doctors', douctor_routes);
 
 
 module.exports = app;
