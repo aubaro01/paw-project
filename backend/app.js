@@ -4,7 +4,6 @@ const connectDB = require('./config/db');
 const douctor_routes = require('./routes/douctor_routes');
 require('dotenv').config();
 
-
 // Connect to database
 connectDB();
 
@@ -19,9 +18,7 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-
 // Routes,  não sei se fiz certo
 app.use('/doctors', douctor_routes);
-
 
 module.exports = app;
