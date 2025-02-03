@@ -5,6 +5,7 @@
   "scripts": {
     "start:backend": "nodemon backend/server.js",
     "dev": "next dev",
+    "dev:all": "concurrently \"npm run start:backend\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.1.6",
     "postcss": "^8.5.1",
