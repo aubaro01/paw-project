@@ -1,7 +1,7 @@
 // Funções do CRUD para os psicologos
-const Doctor = require('../models/doctors');
+const Doctor = require('../models/douctors');
 
-exports.getDoctors = async (req, res) => {
+const getDoctors = async (req, res) => {
   try {
     const doctors = await Doctor.find();
     res.status(200).json(doctors);
@@ -10,7 +10,7 @@ exports.getDoctors = async (req, res) => {
   }
 };
 
-exports.getDoctorById = async (req, res) => {
+const getDoctorById = async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);
     if (!doctor) return res.status(404).json({ message: 'Psicologo não encontrado' });
@@ -20,3 +20,4 @@ exports.getDoctorById = async (req, res) => {
   }
 };
 
+module.exports = { getDoctors, getDoctorById };
