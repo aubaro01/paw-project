@@ -20,6 +20,8 @@ exports.getDoctorById = async (req, res) => {
   }
 };
 
+//Tira e so deixar os gets
+
 exports.createDoctor = async (req, res) => {
   try {
     const newDoctor = new Doctor(req.body);
