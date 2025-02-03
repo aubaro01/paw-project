@@ -60,6 +60,7 @@
 @layer base {
   * {
     border: var(--border);
+    scroll-behavior: smooth;
   }
   body {
     background-color: var(--background);
