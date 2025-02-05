@@ -11,7 +11,7 @@ import "dayjs/locale/pt";
 
 export default function DoctorProfileCard() {
   const [selectedTime, setSelectedTime] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("D MMM"));
 
   const doctor = {
     name: "Dr. José Armindo da Silva Armindo",
@@ -25,18 +25,20 @@ export default function DoctorProfileCard() {
     price: "85 €",
     image: "/doctor-placeholder.jpg",
     availableSlots: {
-      "6 Fev": ["14:30", "15:30"],
-      "7 Fev": ["15:00"],
+      [dayjs().format("D MMM")]: ["-", "-", "-", "-"],
+      [dayjs().add(1, "day").format("D MMM")]: ["14:30", "15:30", "16:30", "17:30"],
+      [dayjs().add(2, "day").format("D MMM")]: ["13:00", "15:00", "16:00"],
+      [dayjs().add(3, "day").format("D MMM")]: ["-", "-", "-", "-"],
     },
   };
 
   // Generate dates dynamically (Today + 3 days)
   const today = dayjs();
   const formattedDates = [
-    { label: "Hoje", date: today },
-    { label: "Amanhã", date: today.add(1, "day") },
-    { label: today.add(2, "day").format("ddd"), date: today.add(2, "day") },
-    { label: today.add(3, "day").format("ddd"), date: today.add(3, "day") },
+    { label: "Hoje", date: today.format("D MMM") },
+    { label: "Amanhã", date: today.add(1, "day").format("D MMM") },
+    { label: today.add(2, "day").format("ddd"), date: today.add(2, "day").format("D MMM") },
+    { label: today.add(3, "day").format("ddd"), date: today.add(3, "day").format("D MMM") },
   ];
 
   return (
@@ -77,7 +79,7 @@ export default function DoctorProfileCard() {
         {/* Consultation Type & Price (Closer to Location) */}
         <div className="flex justify-between items-center border-t mt-3 pt-3">
           <div className="flex items-center text-gray-600">
-            <Stethoscope className="w-4 h-4 mr-2" />
+            <Stethoscope className="w-4 h-4 mr-2 align-middle" />
             <p className="text-sm">{doctor.consultationType}</p>
           </div>
           <p className="font-semibold text-lg">{doctor.price}</p>
@@ -89,36 +91,32 @@ export default function DoctorProfileCard() {
 
       {/* Right Side - Available Slots (50%) */}
       <div className="flex flex-col md:w-[50%]">
-
         {/* Date Selection Row */}
-        <div className="grid grid-cols-4 gap-2 mt-2 mx-4">
+        <div className="grid grid-cols-4 text-center text-gray-600 font-semibold text-sm mb-2">
           {formattedDates.map(({ label, date }, index) => (
             <button
               key={index}
               className={`w-full text-sm font-semibold py-2 px-3 rounded-md text-center ${
-                selectedDate.isSame(date, "day")
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 text-gray-700"
+                selectedDate === date ? "text-black" : "text-gray-600"
               }`}
               onClick={() => setSelectedDate(date)}
             >
               {label}
               <br />
-              <span className="text-xs font-normal">{date.format("D MMM")}</span>
+              <span className="text-xs text-gray-500">{date}</span>
             </button>
           ))}
         </div>
 
         {/* Time Slots (Vertical, Under Each Date) */}
-        <div className="grid grid-cols-4 gap-2 mt-4 mx-4 text-center">
+        <div className="grid grid-cols-4 gap-2 text-center">
           {formattedDates.map(({ date }, index) => {
-            const dateKey = date.format("D MMM");
-            const slots = doctor.availableSlots[dateKey] || [];
+            const slots = doctor.availableSlots[date] || ["-", "-", "-", "-"];
 
             return (
               <div key={index} className="flex flex-col items-center space-y-1">
-                {slots.length > 0 ? (
-                  slots.map((time, i) => (
+                {slots.map((time, i) =>
+                  time !== "-" ? (
                     <Button
                       key={i}
                       variant={selectedTime === time ? "default" : "outline"}
@@ -131,9 +129,9 @@ export default function DoctorProfileCard() {
                     >
                       {time}
                     </Button>
-                  ))
-                ) : (
-                  <p className="text-gray-400 text-sm line-through">-</p>
+                  ) : (
+                    <p key={i} className="text-gray-400 text-sm line-through">-</p>
+                  )
                 )}
               </div>
             );
