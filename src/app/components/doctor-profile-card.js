@@ -94,17 +94,10 @@ export default function DoctorProfileCard() {
         {/* Date Selection Row */}
         <div className="grid grid-cols-4 text-center text-gray-600 font-semibold text-sm mb-2">
           {formattedDates.map(({ label, date }, index) => (
-            <button
-              key={index}
-              className={`w-full text-sm font-semibold py-2 px-3 rounded-md text-center ${
-                selectedDate === date ? "text-black" : "text-gray-600"
-              }`}
-              onClick={() => setSelectedDate(date)}
-            >
-              {label}
-              <br />
+            <div key={index} className="flex flex-col">
+              <span className="text-black">{label}</span>
               <span className="text-xs text-gray-500">{date}</span>
-            </button>
+            </div>
           ))}
         </div>
 
@@ -124,7 +117,7 @@ export default function DoctorProfileCard() {
                       className={`w-full px-3 py-1 text-sm ${
                         selectedTime === time
                           ? "bg-blue-500 text-white"
-                          : "bg-blue-100 text-blue-700"
+                          : "text-blue-700"
                       }`}
                     >
                       {time}
