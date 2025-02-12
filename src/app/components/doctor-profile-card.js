@@ -10,8 +10,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt";
 
 export default function DoctorProfileCard() {
-  // State to track selected time per date (keyed by formatted date)
-  const [selectedTimes, setSelectedTimes] = useState({});
+  // State to track the overall selected slot.
+  // It is an object with properties "date" and "time", or null.
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [showMoreSlots, setShowMoreSlots] = useState(false);
   const pageSize = 4;
@@ -121,12 +122,16 @@ export default function DoctorProfileCard() {
             <div className="w-6" />
           )}
           <div className="grid grid-cols-4 flex-grow h-12 text-center text-gray-600 font-semibold text-sm">
-            {paginatedDates.map(({ label, formatted }, index) => (
-              <div key={index} className="flex flex-col justify-center">
-                <span className="text-black">{label}</span>
-                <span className="text-xs text-gray-500">{formatted}</span>
-              </div>
-            ))}
+            {paginatedDates.map(({ label, formatted, dateObj }, index) => {
+              // Use a unique key (full date string)
+              const dateKey = dateObj.format("YYYY-MM-DD");
+              return (
+                <div key={dateKey} className="flex flex-col justify-center">
+                  <span className="text-black">{label}</span>
+                  <span className="text-xs text-gray-500">{formatted}</span>
+                </div>
+              );
+            })}
           </div>
           {(currentPage + 1) * pageSize < allDates.length ? (
             <Button variant="ghost" onClick={() => setCurrentPage(currentPage + 1)} className="p-1">
@@ -140,20 +145,19 @@ export default function DoctorProfileCard() {
         <div className="mx-7">
           <div className="grid grid-cols-4 gap-1 text-center">
             {paginatedDates.map(({ formatted, dateObj }, index) => {
+              const dateKey = dateObj.format("YYYY-MM-DD");
               const slots = getAvailableSlots(dateObj);
               const displayedSlots = showMoreSlots ? slots : slots.slice(0, defaultSlotsCount);
               return (
-                <div key={index} className="flex flex-col items-center space-y-1">
+                <div key={dateKey} className="flex flex-col items-center space-y-1">
                   {displayedSlots.map((slot, i) =>
                     slot.available ? (
                       <Button
                         key={i}
-                        variant={selectedTimes[formatted] === slot.time ? "default" : "outline"}
-                        onClick={() =>
-                          setSelectedTimes({ ...selectedTimes, [formatted]: slot.time })
-                        }
+                        variant={selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === slot.time ? "default" : "outline"}
+                        onClick={() => setSelectedSlot({ date: dateKey, time: slot.time })}
                         className={`px-4 py-1 text-sm ${
-                          selectedTimes[formatted] === slot.time
+                          selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === slot.time
                             ? "bg-blue-500 text-white"
                             : "bg-blue-100 text-blue-700"
                         }`}
