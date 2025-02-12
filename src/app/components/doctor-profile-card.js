@@ -4,14 +4,19 @@ import React, { useState } from "react";
 import { Card } from "@/app/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
 import { Button } from "@/app/components/ui/button";
-import { MapPin, ChevronRight, Stethoscope, BadgeCheck } from "lucide-react";
+import { MapPin, ChevronRight, ChevronLeft, ChevronDown, ChevronUp, Stethoscope, BadgeCheck } from "lucide-react";
 import Rating from "@mui/material/Rating";
 import dayjs from "dayjs";
 import "dayjs/locale/pt";
 
 export default function DoctorProfileCard() {
-  const [selectedTime, setSelectedTime] = useState(null);
-  const [selectedDate] = useState(dayjs().format("D MMM"));
+  // State to track selected time per date (keyed by formatted date)
+  const [selectedTimes, setSelectedTimes] = useState({});
+  const [currentPage, setCurrentPage] = useState(0);
+  const [showMoreSlots, setShowMoreSlots] = useState(false);
+  const pageSize = 4;
+  // Default number of slots shown (before expanding)
+  const defaultSlotsCount = 6;
 
   const doctor = {
     name: "Dr. José Armindo da Silva Armindo",
@@ -25,31 +30,42 @@ export default function DoctorProfileCard() {
     consultationType: "Primeira consulta Psicologia",
     price: "85 €",
     image: "/doctor-placeholder.jpg",
-    availableSlots: {
-      [dayjs().format("D MMM")]: ["-", "-", "-", "-"],
-      [dayjs().add(1, "day").format("D MMM")]: ["14:30", "15:30", "16:30", "17:30"],
-      [dayjs().add(2, "day").format("D MMM")]: ["13:00", "15:00", "16:00"],
-      [dayjs().add(3, "day").format("D MMM")]: ["-", "-", "-", "-"],
-    },
   };
 
-  // Generate dates dynamically (Hoje, Amanhã, and following days)
+  // Helper: Returns an array of slot objects.
+  // Work hours: 09:00, 10:00, 11:00, 12:00, 14:00, 15:00, 16:00, 17:00, 18:00.
+  // Lunch (13:00–14:00) is omitted.
+  // For testing, mark 09:00, 11:00, 12:00, 16:00, and 17:00 as unavailable.
+  // On Sundays, all slots are returned as unavailable (dash).
+  function getAvailableSlots(dateObj) {
+    const allSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+    if (dateObj.day() === 0) {
+      return allSlots.map(() => ({ time: "-", available: false }));
+    }
+    const notAvailable = ["09:00", "11:00", "12:00", "16:00", "17:00"];
+    return allSlots.map(slot => ({
+      time: slot,
+      available: !notAvailable.includes(slot),
+    }));
+  }
+
+  // Generate an array of dates (30 days starting from today)
+  const totalDays = 30;
   const today = dayjs();
-  const formattedDates = [
-    { label: "Hoje", date: today.format("D MMM") },
-    { label: "Amanhã", date: today.add(1, "day").format("D MMM") },
-    {
-      label: today.add(2, "day").format("ddd"),
-      date: today.add(2, "day").format("D MMM"),
-    },
-    {
-      label: today.add(3, "day").format("ddd"),
-      date: today.add(3, "day").format("D MMM"),
-    },
-  ];
+  const allDates = Array.from({ length: totalDays }, (_, i) => {
+    const dateObj = today.add(i, "day");
+    let label = "";
+    if (i === 0) label = "Hoje";
+    else if (i === 1) label = "Amanhã";
+    else label = dateObj.format("ddd");
+    return { label, formatted: dateObj.format("D MMM"), dateObj };
+  });
+
+  // Determine the current page's dates
+  const paginatedDates = allDates.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   return (
-    <Card className="max-w-4xl w-full mx-auto flex flex-col md:flex-row shadow-md border rounded-lg bg-white min-h-[250px] p-6">
+    <Card className="max-w-4xl w-full mx-auto flex flex-col md:flex-row shadow-md border rounded-lg bg-white min-h-[300px] p-8">
       {/* Left Side – Doctor Info */}
       <div className="flex flex-col md:w-1/2">
         {/* Header Row: Avatar and Doctor Details */}
@@ -61,42 +77,25 @@ export default function DoctorProfileCard() {
           <div>
             <div className="flex items-center space-x-2">
               <p className="text-lg font-bold">{doctor.name}</p>
-              {doctor.verified && (
-                <BadgeCheck className="w-4 h-4 text-green-600" />
-              )}
+              {doctor.verified && <BadgeCheck className="w-4 h-4 text-green-600" />}
             </div>
             <p className="text-gray-500">{doctor.specialty}</p>
             <div className="flex items-center space-x-2 mt-1">
-              <Rating
-                value={doctor.rating}
-                precision={0.5}
-                readOnly
-                sx={{ color: "#16a34a" }}
-              />
-              <span className="text-sm text-gray-600">
-                {doctor.reviews} opiniões
-              </span>
+              <Rating value={doctor.rating} precision={0.5} readOnly sx={{ color: "#16a34a" }} />
+              <span className="text-sm text-gray-600">{doctor.reviews} opiniões</span>
             </div>
           </div>
         </div>
-
         {/* Location */}
         <div className="mt-5">
           <div className="flex items-center text-gray-700">
             <MapPin className="w-4 h-4 mr-2" />
             <span>
-              {doctor.city} •{" "}
-              <a
-                href={doctor.mapLink}
-                className="text-blue-600 hover:underline"
-              >
-                Mapa
-              </a>
+              {doctor.city} • <a href={doctor.mapLink} className="text-blue-600 hover:underline">Mapa</a>
             </span>
           </div>
           <div className="ml-6 text-gray-500">{doctor.location}</div>
         </div>
-
         {/* Consultation Type & Price */}
         <div className="flex justify-between items-center border-t mt-3 pt-3">
           <div className="flex items-center text-gray-600">
@@ -112,54 +111,81 @@ export default function DoctorProfileCard() {
 
       {/* Right Side – Available Slots */}
       <div className="flex flex-col md:w-1/2 mt-6 md:mt-0">
-        {/* Date Selection Row */}
-        <div className="grid grid-cols-4 text-center text-gray-600 font-semibold text-sm mb-2">
-          {formattedDates.map(({ label, date }, index) => (
-            <div key={index} className="flex flex-col">
-              <span className="text-black">{label}</span>
-              <span className="text-xs text-gray-500">{date}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Time Slots */}
-        <div className="grid grid-cols-4 gap-2 text-center">
-          {formattedDates.map(({ date }, index) => {
-            const slots = doctor.availableSlots[date] || ["-", "-", "-", "-"];
-            return (
-              <div key={index} className="flex flex-col items-center space-y-1">
-                {slots.map((time, i) =>
-                  time !== "-" ? (
-                    <Button
-                      key={i}
-                      variant={selectedTime === time ? "default" : "outline"}
-                      onClick={() => setSelectedTime(time)}
-                      className={`w-full px-3 py-1 text-sm ${
-                        selectedTime === time
-                          ? "bg-blue-500 text-white"
-                          : "text-blue-700"
-                      }`}
-                    >
-                      {time}
-                    </Button>
-                  ) : (
-                    <p
-                      key={i}
-                      className="text-gray-400 text-sm line-through"
-                    >
-                      -
-                    </p>
-                  )
-                )}
+        {/* Date Selection Row with Pagination Arrows */}
+        <div className="flex items-center justify-between mb-2">
+          {currentPage > 0 ? (
+            <Button variant="ghost" onClick={() => setCurrentPage(currentPage - 1)} className="p-1">
+              <ChevronLeft className="w-6 h-6" />
+            </Button>
+          ) : (
+            <div className="w-6" />
+          )}
+          <div className="grid grid-cols-4 flex-grow h-12 text-center text-gray-600 font-semibold text-sm">
+            {paginatedDates.map(({ label, formatted }, index) => (
+              <div key={index} className="flex flex-col justify-center">
+                <span className="text-black">{label}</span>
+                <span className="text-xs text-gray-500">{formatted}</span>
               </div>
-            );
-          })}
+            ))}
+          </div>
+          {(currentPage + 1) * pageSize < allDates.length ? (
+            <Button variant="ghost" onClick={() => setCurrentPage(currentPage + 1)} className="p-1">
+              <ChevronRight className="w-6 h-6" />
+            </Button>
+          ) : (
+            <div className="w-6" />
+          )}
         </div>
-
-        {/* Pagination Button */}
-        <div className="flex justify-end mt-4">
-          <Button variant="ghost" className="hover:bg-gray-100 rounded-full p-1">
-            <ChevronRight className="w-6 h-6" />
+        {/* Time Slots Grid Wrapper (smaller width) */}
+        <div className="mx-7">
+          <div className="grid grid-cols-4 gap-1 text-center">
+            {paginatedDates.map(({ formatted, dateObj }, index) => {
+              const slots = getAvailableSlots(dateObj);
+              const displayedSlots = showMoreSlots ? slots : slots.slice(0, defaultSlotsCount);
+              return (
+                <div key={index} className="flex flex-col items-center space-y-1">
+                  {displayedSlots.map((slot, i) =>
+                    slot.available ? (
+                      <Button
+                        key={i}
+                        variant={selectedTimes[formatted] === slot.time ? "default" : "outline"}
+                        onClick={() =>
+                          setSelectedTimes({ ...selectedTimes, [formatted]: slot.time })
+                        }
+                        className={`px-4 py-1 text-sm ${
+                          selectedTimes[formatted] === slot.time
+                            ? "bg-blue-500 text-white"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
+                        {slot.time}
+                      </Button>
+                    ) : slot.time !== "-" ? (
+                      <p
+                        key={i}
+                        className="text-gray-400 text-sm line-through min-h-[28px] flex items-center justify-center"
+                      >
+                        {slot.time}
+                      </p>
+                    ) : (
+                      <p
+                        key={i}
+                        className="text-gray-400 text-xs min-h-[28px] flex items-center justify-center"
+                      >
+                        {slot.time}
+                      </p>
+                    )
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        {/* "Mostrar mais horários" / "Ocultar horários" Link */}
+        <div className="mt-2 text-center">
+          <Button variant="link" onClick={() => setShowMoreSlots(!showMoreSlots)} className="text-blue-600 hover:underline">
+            {showMoreSlots ? "Ocultar horários" : "Mostrar mais horários"}{" "}
+            {showMoreSlots ? <ChevronUp className="w-4 h-4 inline" /> : <ChevronDown className="w-4 h-4 inline" />}
           </Button>
         </div>
       </div>
