@@ -25,6 +25,9 @@ export default function Header() {
         <Button variant="ghost" size="icon" className="md:hidden">
           <Menu className="h-6 w-6" />
         </Button>
+        <Link href="/test">
+            <Button variant="default">Component Testing</Button>
+        </Link>
       </div>
     </header>
   )
