@@ -82,7 +82,7 @@ export default function DoctorProfileCard() {
             </div>
             <p className="text-gray-500">{doctor.specialty}</p>
             <div className="flex items-center space-x-2 mt-1">
-              <Rating value={doctor.rating} precision={0.5} readOnly sx={{ color: "#16a34a" }} />
+              <Rating value={doctor.rating} precision={0.5} readOnly sx={{ color: "#58c0a6" }} />
               <span className="text-sm text-gray-600">{doctor.reviews} opiniões</span>
             </div>
           </div>
