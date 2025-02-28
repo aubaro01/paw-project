@@ -25,6 +25,7 @@ export default function DoctorProfileCard() {
     verified: true,
     reviews: 127,
     rating: 4.5,
+    number: "32538",
     city: "Porto",
     location: "Rua de Sá da Bandeira, 567, 1º andar",
     mapLink: "#",
@@ -81,6 +82,7 @@ export default function DoctorProfileCard() {
               {doctor.verified && <BadgeCheck className="w-4 h-4 text-green-600" />}
             </div>
             <p className="text-gray-500">{doctor.specialty}</p>
+            <p className="text-gray-500">Número da Ordem: {doctor.number}</p>
             <div className="flex items-center space-x-2 mt-1">
               <Rating value={doctor.rating} precision={0.5} readOnly sx={{ color: "#58c0a6" }} />
               <span className="text-sm text-gray-600">{doctor.reviews} opiniões</span>
