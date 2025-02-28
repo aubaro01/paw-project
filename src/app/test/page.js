@@ -13,13 +13,12 @@ const DoctorMapNoSSR = dynamic(
 export default function DoctorSearchPage() {
   return (
     <section className="min-h-screen bg-gray-100 p-4">
-      <div>
-        <StickyFilterNav />
-      </div>
       {/* Wrapper container */}
       <div className=" max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-6">Doctor Search</h1>
-
+        <div className="mb-20">
+          <StickyFilterNav />
+        </div>
         {/* Flex container for the two columns */}
         <div className="flex lg:flex-row items-start justify-center gap-4">
           {/* Left Column: Doctor Card */}
