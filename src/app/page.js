@@ -4,6 +4,7 @@ import FeaturedDoctors from "./components/featured-doctors"
 import Testimonials from "./components/testimonials"
 import AboutSection from "./components/about-section"
 import ContactCTA from "./components/contact-cta"
+import DoctorMap from "./components/doctor-map"
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <FeaturedDoctors />
       <Testimonials />
       <ContactCTA />
+      <DoctorMap />
     </>
   )
 }
