@@ -81,13 +81,33 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .animate-progress {
+    animation: progress 2s infinite linear;
+    background: linear-gradient(
+      to right,
+      theme("colors.emerald.500"),
+      theme("colors.emerald.300"),
+      theme("colors.emerald.500")
+    );
+    background-size: 200% 100%;
+  }
+
+  @keyframes progress {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 }

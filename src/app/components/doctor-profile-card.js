@@ -1,23 +1,23 @@
-'use client';
+"use client"
 
-import React, { useState } from "react";
-import { Card } from "@/app/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
-import { Button } from "@/app/components/ui/button";
-import { MapPin, ChevronRight, ChevronLeft, ChevronDown, ChevronUp, Stethoscope, BadgeCheck } from "lucide-react";
-import Rating from "@mui/material/Rating";
-import dayjs from "dayjs";
-import "dayjs/locale/pt";
+import { useState } from "react"
+import { Card } from "@/app/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
+import { Button } from "@/app/components/ui/button"
+import { MapPin, ChevronRight, ChevronLeft, ChevronDown, ChevronUp, Stethoscope, BadgeCheck } from "lucide-react"
+import Rating from "@mui/material/Rating"
+import dayjs from "dayjs"
+import "dayjs/locale/pt"
 
 export default function DoctorProfileCard() {
   // State to track the overall selected slot.
   // It is an object with properties "date" and "time", or null.
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [showMoreSlots, setShowMoreSlots] = useState(false);
-  const pageSize = 4;
+  const [selectedSlot, setSelectedSlot] = useState(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [showMoreSlots, setShowMoreSlots] = useState(false)
+  const pageSize = 4
   // Default number of slots shown (before expanding)
-  const defaultSlotsCount = 6;
+  const defaultSlotsCount = 6
 
   const doctor = {
     name: "Dr. José Armindo da Silva Armindo",
@@ -31,7 +31,7 @@ export default function DoctorProfileCard() {
     consultationType: "Primeira consulta Psicologia",
     price: "85 €",
     image: "/doctor-placeholder.jpg",
-  };
+  }
 
   // Helper: Returns an array of slot objects.
   // Work hours: 09:00, 10:00, 11:00, 12:00, 14:00, 15:00, 16:00, 17:00, 18:00.
@@ -39,31 +39,31 @@ export default function DoctorProfileCard() {
   // For testing, mark 09:00, 11:00, 12:00, 16:00, and 17:00 as unavailable.
   // On Sundays, all slots are returned as unavailable (dash).
   function getAvailableSlots(dateObj) {
-    const allSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+    const allSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
     if (dateObj.day() === 0) {
-      return allSlots.map(() => ({ time: "-", available: false }));
+      return allSlots.map(() => ({ time: "-", available: false }))
     }
-    const notAvailable = ["09:00", "11:00", "12:00", "16:00", "17:00"];
-    return allSlots.map(slot => ({
+    const notAvailable = ["09:00", "11:00", "12:00", "16:00", "17:00"]
+    return allSlots.map((slot) => ({
       time: slot,
       available: !notAvailable.includes(slot),
-    }));
+    }))
   }
 
   // Generate an array of dates (30 days starting from today)
-  const totalDays = 30;
-  const today = dayjs();
+  const totalDays = 30
+  const today = dayjs()
   const allDates = Array.from({ length: totalDays }, (_, i) => {
-    const dateObj = today.add(i, "day");
-    let label = "";
-    if (i === 0) label = "Hoje";
-    else if (i === 1) label = "Amanhã";
-    else label = dateObj.format("ddd");
-    return { label, formatted: dateObj.format("D MMM"), dateObj };
-  });
+    const dateObj = today.add(i, "day")
+    let label = ""
+    if (i === 0) label = "Hoje"
+    else if (i === 1) label = "Amanhã"
+    else label = dateObj.format("ddd")
+    return { label, formatted: dateObj.format("D MMM"), dateObj }
+  })
 
   // Determine the current page's dates
-  const paginatedDates = allDates.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const paginatedDates = allDates.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
 
   return (
     <Card className="max-w-4xl w-full mx-auto flex flex-col md:flex-row shadow-md border rounded-lg bg-white min-h-[300px] p-8">
@@ -92,7 +92,10 @@ export default function DoctorProfileCard() {
           <div className="flex items-center text-gray-700">
             <MapPin className="w-4 h-4 mr-2" />
             <span>
-              {doctor.city} • <a href={doctor.mapLink} className="text-blue-600 hover:underline">Mapa</a>
+              {doctor.city} •{" "}
+              <a href={doctor.mapLink} className="text-blue-600 hover:underline">
+                Mapa
+              </a>
             </span>
           </div>
           <div className="ml-6 text-gray-500">{doctor.location}</div>
@@ -124,13 +127,13 @@ export default function DoctorProfileCard() {
           <div className="grid grid-cols-4 flex-grow h-12 text-center text-gray-600 font-semibold text-sm">
             {paginatedDates.map(({ label, formatted, dateObj }, index) => {
               // Use a unique key (full date string)
-              const dateKey = dateObj.format("YYYY-MM-DD");
+              const dateKey = dateObj.format("YYYY-MM-DD")
               return (
                 <div key={dateKey} className="flex flex-col justify-center">
                   <span className="text-black">{label}</span>
                   <span className="text-xs text-gray-500">{formatted}</span>
                 </div>
-              );
+              )
             })}
           </div>
           {(currentPage + 1) * pageSize < allDates.length ? (
@@ -145,16 +148,20 @@ export default function DoctorProfileCard() {
         <div className="mx-7">
           <div className="grid grid-cols-4 gap-1 text-center">
             {paginatedDates.map(({ formatted, dateObj }, index) => {
-              const dateKey = dateObj.format("YYYY-MM-DD");
-              const slots = getAvailableSlots(dateObj);
-              const displayedSlots = showMoreSlots ? slots : slots.slice(0, defaultSlotsCount);
+              const dateKey = dateObj.format("YYYY-MM-DD")
+              const slots = getAvailableSlots(dateObj)
+              const displayedSlots = showMoreSlots ? slots : slots.slice(0, defaultSlotsCount)
               return (
                 <div key={dateKey} className="flex flex-col items-center space-y-1">
                   {displayedSlots.map((slot, i) =>
                     slot.available ? (
                       <Button
                         key={i}
-                        variant={selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === slot.time ? "default" : "outline"}
+                        variant={
+                          selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === slot.time
+                            ? "default"
+                            : "outline"
+                        }
                         onClick={() => setSelectedSlot({ date: dateKey, time: slot.time })}
                         className={`px-4 py-1 text-sm ${
                           selectedSlot && selectedSlot.date === dateKey && selectedSlot.time === slot.time
@@ -172,27 +179,28 @@ export default function DoctorProfileCard() {
                         {slot.time}
                       </p>
                     ) : (
-                      <p
-                        key={i}
-                        className="text-gray-400 text-xs min-h-[28px] flex items-center justify-center"
-                      >
+                      <div key={i} className="text-gray-400 text-sm min-h-[28px] flex items-center justify-center">
                         {slot.time}
-                      </p>
-                    )
+                      </div>
+                    ),
                   )}
                 </div>
-              );
+              )
             })}
           </div>
         </div>
         {/* "Mostrar mais horários" / "Ocultar horários" Link */}
         <div className="mt-2 text-center">
-          <Button variant="link" onClick={() => setShowMoreSlots(!showMoreSlots)} className="text-blue-600 hover:underline">
+          <Button
+            variant="link"
+            onClick={() => setShowMoreSlots(!showMoreSlots)}
+            className="text-blue-600 hover:underline"
+          >
             {showMoreSlots ? "Ocultar horários" : "Mostrar mais horários"}{" "}
             {showMoreSlots ? <ChevronUp className="w-4 h-4 inline" /> : <ChevronDown className="w-4 h-4 inline" />}
           </Button>
         </div>
       </div>
     </Card>
-  );
+  )
 }
