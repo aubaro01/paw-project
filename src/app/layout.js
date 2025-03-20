@@ -16,6 +16,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
   return (
     <html lang="pt" className="scroll-smooth">
       <body className={`${inter.variable} ${poppins.variable} font-sans bg-gray-50 text-gray-900`}>

@@ -18,6 +18,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        available_dates:
+          "border border-input bg-background px-4 py-2 text-foreground shadow-sm hover:bg-accent flex items-center gap-2",
+        health_plan:
+          "border border-input bg-background px-4 py-2 text-foreground shadow-sm hover:bg-accent flex items-center gap-2",
+        more_filters:
+          "border border-input bg-background px-4 py-2 text-foreground shadow-sm hover:bg-accent flex items-center gap-2",
       },
       size: {
         default: "h-10 px-4 py-2",
